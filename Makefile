@@ -58,7 +58,7 @@ prepare: ## Create all necessary directories to be used in build
 
 .PHONY: format
 format: $(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img unmount ## Format the SD card with Raspbian
-	echo "Formatting SD card with $(RASPBIAN_IMAGE_VERSION).img"
+	echo "Formatting $(MNT_DEVICE) with $(RASPBIAN_IMAGE_VERSION).img"
 	sudo dd bs=4M if=./$(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img of=$(MNT_DEVICE) status=progress conv=fsync
 
 .PHONY: bootstrap
