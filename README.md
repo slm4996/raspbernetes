@@ -1,11 +1,6 @@
 # Raspbernetes
 
-Automated and repeatable method of deploying a headless Kubernetes stack
-onto a cluster of Raspberry Pis. Completely hands off experience from
-power on.
-
-Detailed blog and guide posted onto my medium account:
-- [Headless Kubernetes on 15 Raspberry Pis boot in under 8 minutes](https://medium.com/@lucas.teligioridis/headless-kubernetes-on-15-raspberry-pis-boot-in-under-8-minutes-808402ea2348)
+Forked from https://github.com/lucasteligioridis/raspbernetes and influenced by https://github.com/Raspbernetes/k8s-cluster-installation
 
 ## Prerequisites
 
@@ -15,22 +10,13 @@ used to build the SD cards:
 - Linux - Because of filesystem requirements
 - `bash` - 4.0+
 - `make` - 4.1+
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) - 1.16.1
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - 4 Raspberry Pis (3 Masters and 1 Worker)
 
 ## Applications
 
 This stack is an opinionated way to deploy a home cluster with a HA design
 using `haproxy` and `keepalived` for cluster management.
-
-See below for a list of the versions and applications used:
-
-- [Raspbian](https://downloads.raspberrypi.org/raspbian_lite/images/) - raspbian_lite-2019-09-30
-- [Kubernetes](https://kubernetes.io/) - 1.16.1
-- [Docker](https://www.docker.com/) - 18.09.0
-- [HA Proxy](http://www.haproxy.org/) - 1.8.19
-- [Keepalived](https://www.keepalived.org/) - 2.0.10
-- [Flannel](https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml) - As per instructions on kubeadm installation page
 
 ## Configuration
 
@@ -60,8 +46,8 @@ A short explanation of each environment variable that can be overridden.
 
 #### Network configuration if using Wifi. Accompanied with `RPI_NETWORK_TYPE` of `wlan0`:
 
-- `WIFI_SSID` - Local SSID to connect Wifi to. (default: `n/a`)
-- `WIFI_PASSWORD` - Password of above SSID to connect to Wifi using wpa_supplicant. (default: `n/a`)
+- `RPI_WIFI_SSID` - Local SSID to connect Wifi to. (default: `n/a`)
+- `RPI_WIFI_PASSWORD` - Password of above SSID to connect to Wifi using wpa_supplicant. (default: `n/a`)
 
 ### Run
 
