@@ -6,7 +6,7 @@ if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     apt-get install -y --no-install-recommends haproxy
     apt-mark hold haproxy
 
-     create a configuration file for all other master hosts
+    #create a configuration file for all other master hosts
 cat << EOF >> /etc/haproxy/haproxy.cfg
 
 frontend kube-api
