@@ -73,10 +73,10 @@ bootstrap: prepare mount $(OUTPUT_PATH)/ssh/id_ed25519 ## Install bootstrap scri
 	echo "Step - bootstrap"
 	sudo touch $(MNT_BOOT)/ssh
 	sudo mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap
-	cp -r ./raspbernetes/* $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/
-	mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh
-	cp ./$(OUTPUT_PATH)/ssh/id_ed25519 $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/
-	cp ./$(OUTPUT_PATH)/ssh/id_ed25519.pub $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/authorized_keys
+	sudo cp -r ./raspbernetes/* $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/
+	sudo mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh
+	sudo cp ./$(OUTPUT_PATH)/ssh/id_ed25519 $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/
+	sudo cp ./$(OUTPUT_PATH)/ssh/id_ed25519.pub $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/authorized_keys
 	sudo rm -f $(MNT_ROOT)/etc/motd
 	unmount
 
