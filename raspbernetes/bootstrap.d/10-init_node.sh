@@ -15,3 +15,6 @@ if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     echo "Pulling down all kubeadm images..."
     kubeadm config images pull
 fi
+
+# ensure bootstrap scripts don't run again on boot
+sed -i "/bootstrap.sh/d" /etc/rc.local

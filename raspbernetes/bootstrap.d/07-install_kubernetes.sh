@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-pi_home="/home/pi"
-kube_finished="${pi_home}/kube-finished-booting"
+KUBE_USER_HOME="/home/pi"
+kube_finished="${KUBE_USER_HOME}/kube-finished-booting"
 
 etcdctl_cmd() {
   remote_control_plane \
@@ -20,7 +20,7 @@ remote_control_plane() {
     -q \
     -o UserKnownHostsFile=/dev/null \
     -o StrictHostKeyChecking=no \
-    -i "${pi_home}/.ssh/id_ed25519" \
+    -i "${KUBE_USER_HOME}/.ssh/id_ed25519" \
     "pi@${KUBE_MASTER_VIP}" "${@}"
 }
 
@@ -85,13 +85,13 @@ get_certs() {
 
 get_config() {
   mkdir -p "/root/.kube"
-  mkdir -p "${pi_home}/.kube"
+  mkdir -p "${KUBE_USER_HOME}/.kube"
   sed -i "s/6443/8443/" /etc/kubernetes/admin.conf
   cp -f /etc/kubernetes/admin.conf "/root/.kube/config"
-  cp -f /etc/kubernetes/admin.conf "${pi_home}/.kube/config"
+  cp -f /etc/kubernetes/admin.conf "${KUBE_USER_HOME}/.kube/config"
   chown -R "$(id -u):$(id -g)" "/root/.kube"
-  chown -R "$(id -u pi):$(id -g pi)" "${pi_home}/"
-  echo "source <(kubectl completion bash)" >> "${pi_home}/.bashrc"
+  chown -R "$(id -u pi):$(id -g pi)" "${KUBE_USER_HOME}/"
+  echo "source <(kubectl completion bash)" >> "${KUBE_USER_HOME}/.bashrc"
 }
 
 join_master() {

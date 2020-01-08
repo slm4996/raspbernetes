@@ -2,14 +2,14 @@
 set -euo pipefail
 
 echo "Installing docker"
-curl -sSL get.docker.com | sh && \
-    usermod pi -aG docker
+curl -sSL get.docker.com | sh
+usermod pi -aG docker
 
 echo "Disabling swap"
-dphys-swapfile swapoff && \
-    dphys-swapfile uninstall && \
-    update-rc.d dphys-swapfile remove && \
-    systemctl disable dphys-swapfile.service
+dphys-swapfile swapoff
+dphys-swapfile uninstall
+update-rc.d dphys-swapfile remove
+systemctl disable dphys-swapfile.service
 
 echo "Setup docker daemon to user systemd as per kubernetes best practices"
 cat << EOF >> /etc/docker/daemon.json

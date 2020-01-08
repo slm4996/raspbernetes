@@ -1,37 +1,29 @@
 #!/bin/bash
 set -euo pipefail
 
-# change to directory where bootstrap lives
-cd "${0%/*}"
+#### Common setup
+## Exit on any non-zero return value
+## Script return value will be the exit value of the last command to exit iwth a zon-zero status
+set -euo pipefail
 
-# source the environment variables for hostname, IP addresses and node type
-# shellcheck disable=SC1091
-source ./rpi-env
-
-# set default hostname
-./conf/hostname.sh
-
-echo "Waiting for system to boot before attempting to install packages..."
-sleep 30
-
-# install system dependencies in order
-./conf/firmware.sh
-./install/utils.sh
-./install/iptables.sh
-./install/docker.sh
-./install/kubernetes.sh
-
-# only install some components on master nodes
-if [ "${KUBE_NODE_TYPE}" == "master" ]; then
-  ./install/keepalived.sh
-  ./install/haproxy.sh
+## Check for root
+if [[ ${EUID} -ne 0 ]]; then
+    echo " !!! This tool must be run with sudo / as root"
+    exit 1
 fi
 
-# configure kubernetes with node type and/or initialising cluster
-./conf/kubernetes.sh
+## Change to script directory
+cd "${0%/*}"
 
-# ensure bootstrap scripts don't run again on boot and clean
-sed -i "/bootstrap.sh/d" /etc/rc.local
-rm -rf /home/pi/bootstrap
+## source the environment variables for hostname, IP addresses and node type
+# shellcheck source=/dev/null
+source ./env
+
+#### Sub-Modules
+## Load sub-modules from bootstrap.d directory
+for file in ./bootstrap.d/*; do
+    # shellcheck source=/dev/null
+    source "$file"
+done
 
 echo "Finished booting! Kubernetes successfully running!"
