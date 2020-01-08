@@ -72,7 +72,7 @@ format: $(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img ## Format the SD card with 
 bootstrap: prepare mount $(OUTPUT_PATH)/ssh/id_ed25519 ## Install bootstrap scripts to mounted media
 	echo "Step - bootstrap"
 	sudo touch $(MNT_BOOT)/ssh
-	mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap
+	sudo mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap
 	cp -r ./raspbernetes/* $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/
 	mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh
 	cp ./$(OUTPUT_PATH)/ssh/id_ed25519 $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/
