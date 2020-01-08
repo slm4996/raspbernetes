@@ -6,7 +6,7 @@ if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     apt-get install -y --no-install-recommends haproxy
     apt-mark hold haproxy
 
-    # create a configuration file for all other master hosts
+     create a configuration file for all other master hosts
 cat << EOF >> /etc/haproxy/haproxy.cfg
 
 frontend kube-api
@@ -28,6 +28,7 @@ backend kube-api
   server kube-master-03 ${KUBE_MASTER_IP_03}:6443 check
 EOF
 
-    echo "Reload haproxy after new configuration"
-    systemctl reload haproxy
+    echo "Restart haproxy after new configuration"
+    systemctl enable haproxy
+    systemctl restart haproxy
 fi

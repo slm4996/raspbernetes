@@ -9,23 +9,8 @@ else
     echo "Installing docker"
     curl -sSL get.docker.com | sh
     usermod pi -aG docker
-fi
 
-lsb_dist=$(get_distribution)
-if "$lsb_dist" -eq 'raspbian'; then
-    ## Only if running on a Pi
-    echo "Disabling swap"
-    dphys-swapfile swapoff
-    dphys-swapfile uninstall
-    update-rc.d dphys-swapfile remove
-    systemctl disable dphys-swapfile.service
-else
-    ## Other systems
-    swapoff -a
-    sudo sed -i '/ swap / s/^/#/' /etc/fstab
-fi
-
-echo "Setup docker daemon to user systemd as per kubernetes best practices"
+    echo "Setup docker daemon to user systemd as per kubernetes best practices"
 cat << EOF >> /etc/docker/daemon.json
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
@@ -37,6 +22,22 @@ cat << EOF >> /etc/docker/daemon.json
 }
 EOF
 
-echo "Restarting docker"
-systemctl daemon-reload
-systemctl restart docker
+    echo "Restarting docker"
+    systemctl daemon-reload
+    systemctl restart docker
+fi
+
+if grep -Fq 'raspbian' /etc/os-release; then
+    if systemctl list-units --type service --state active | grep -Fq 'dphys-swapfile.service'; then
+        ## Only if running on a Pi
+        echo "Disabling swap"
+        dphys-swapfile swapoff
+        dphys-swapfile uninstall
+        update-rc.d dphys-swapfile remove
+        systemctl disable dphys-swapfile.service
+    fi
+else
+    ## Other systems
+    swapoff -a
+    sudo sed -i '/ swap / s/^/#/' /etc/fstab
+fi

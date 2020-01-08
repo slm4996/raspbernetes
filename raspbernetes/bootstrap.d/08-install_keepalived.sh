@@ -19,7 +19,7 @@ if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     # generate configuration file
 cat << EOF > /etc/keepalived/keepalived.conf
 vrrp_instance VI_1 {
-    interface ${RPI_NETWORK_TYPE}
+    interface ${KUBE_NODE_INTERFACE}
     virtual_router_id 1
     priority ${priority}
     advert_int 1

@@ -111,6 +111,8 @@ ExecStart=/home/$KUBE_NODE_USER/bootstrap/bootstrap.sh
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=kubernetes-bootstrap
+After=network-online.target
+Wants=network-online.target
 
 [Install]
 WantedBy=multi-user.target
