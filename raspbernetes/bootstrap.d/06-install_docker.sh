@@ -3,15 +3,16 @@ set -euo pipefail
 
 if command_exists docker; then
     apt update
-    apt upgrade docker-ce-cli
-    apt upgrade docker-ce
+    apt install --only-upgrade docker-ce-cli
+    apt install --only-upgrade docker-ce
 else
     echo "Installing docker"
     curl -sSL get.docker.com | sh
     usermod pi -aG docker
 fi
 
-if lsb_dist -eq 'raspbian'; then
+lsb_dist=$(get_release)
+if "$lsb_dist" -eq 'raspbian'; then
     ## Only if running on a Pi
     echo "Disabling swap"
     dphys-swapfile swapoff
