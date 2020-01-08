@@ -5,11 +5,18 @@ echo "Installing docker"
 curl -sSL get.docker.com | sh
 usermod pi -aG docker
 
-echo "Disabling swap"
-dphys-swapfile swapoff
-dphys-swapfile uninstall
-update-rc.d dphys-swapfile remove
-systemctl disable dphys-swapfile.service
+if lsb_dist -eq 'raspbian'; then
+    ## Only if running on a Pi
+    echo "Disabling swap"
+    dphys-swapfile swapoff
+    dphys-swapfile uninstall
+    update-rc.d dphys-swapfile remove
+    systemctl disable dphys-swapfile.service
+else
+    ## Other systems
+    swapoff -a
+    sudo sed -i '/ swap / s/^/#/' /etc/fstab
+fi
 
 echo "Setup docker daemon to user systemd as per kubernetes best practices"
 cat << EOF >> /etc/docker/daemon.json
