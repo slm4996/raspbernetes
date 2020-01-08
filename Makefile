@@ -52,17 +52,25 @@ endif
 
 .PHONY: prepare
 prepare: ## Create all necessary directories to be used in build
-	sudo mkdir -p $(MNT_BOOT)/boot
-	sudo mkdir -p $(MNT_ROOT)/root
+	echo "Step - prepare"
+	echo "Creating mountpoints:"
+	echo "- $(MNT_BOOT)"
+	echo "- $(MNT_ROOT)"
+	echo "Creating staging folder:"
+	echo "- ./$(OUTPUT_PATH)/ssh/"
+	sudo mkdir -p $(MNT_BOOT)
+	sudo mkdir -p $(MNT_ROOT)
 	mkdir -p ./$(OUTPUT_PATH)/ssh/
 
 .PHONY: format
 format: $(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img unmount ## Format the SD card with Raspbian
+	echo "Step - format"
 	echo "Formatting $(MNT_DEVICE) with $(RASPBIAN_IMAGE_VERSION).img"
 	sudo dd bs=4M if=./$(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img of=$(MNT_DEVICE) status=progress conv=fsync
 
 .PHONY: bootstrap
 bootstrap: $(OUTPUT_PATH)/ssh/id_ed25519 mount ## Install bootstrap scripts to mounted media
+	echo "Step - bootstrap"
 	sudo touch $(MNT_BOOT)/ssh
 	mkdir -p $(KUBE_NODE_USER_HOME)/bootstrap/
 	cp -r ./raspbernetes/* $(KUBE_NODE_USER_HOME)/bootstrap/
@@ -73,6 +81,7 @@ bootstrap: $(OUTPUT_PATH)/ssh/id_ed25519 mount ## Install bootstrap scripts to m
 
 .PHONY: configure
 configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
+	echo "Step - configure"
 	## Disable SSH password based login
 	sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication no/g" $(MNT_ROOT)/etc/ssh/sshd_config
 	## Enable cgroups on boot
@@ -119,6 +128,7 @@ configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
 ## Helpers
 .PHONY: wlan0
 wlan0: ## Install wpa_supplicant for auto network join
+	echo "Step - wlan0"
 	test -n "$(KUBE_NODE_WIFI_SSID)"
 	test -n "$(KUBE_NODE_WIFI_PASSWORD)"
 	sudo cp ./raspbernetes/template/wpa_supplicant.conf $(MNT_BOOT)/wpa_supplicant.conf
@@ -127,6 +137,7 @@ wlan0: ## Install wpa_supplicant for auto network join
 
 .PHONY: eth0
 eth0: ## Nothing to do for eth0
+	echo "Step - eth0"
 
 $(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img: ## Download Raspbian image and extract to current directory
 	echo "Downloading $(RASPBIAN_IMAGE_VERSION).img..."
@@ -139,6 +150,7 @@ $(OUTPUT_PATH)/ssh/id_ed25519: ## Generate SSH keypair to use in cluster communi
 
 .PHONY: mount
 mount: ## Mount the specified media device
+	echo "Step - mount"
 ifeq (,$(findstring mmcblk,$(MNT_DEVICE)))
 	sudo mount $(MNT_DEVICE)1 $(MNT_BOOT)
 	sudo mount $(MNT_DEVICE)2 $(MNT_ROOT)
@@ -149,6 +161,7 @@ endif
 
 .PHONY: unmount
 unmount: ## Unmount the specified media device
+	echo "Step - unmount"
 ifeq (,$(findstring mmcblk,$(MNT_DEVICE)))
 	sudo umount $(MNT_DEVICE)1 || true
 	sudo umount $(MNT_DEVICE)2 || true
