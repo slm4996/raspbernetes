@@ -87,23 +87,23 @@ configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
 	## Enable cgroups on boot
 	sudo sed -i "s/^/cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory /" $(MNT_BOOT)/cmdline.txt
 	## Add node custom configuration file to be sourced on boot
-	echo "#!/bin/bash"													| sudo tee $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "## Node specific"												| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_INTERFACE=$(KUBE_NODE_INTERFACE)"			| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_WIFI_SSID=$(KUBE_NODE_WIFI_SSID)"			| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_WIFI_PASSWORD=$(KUBE_NODE_WIFI_PASSWORD)"	| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_HOSTNAME=$(KUBE_NODE_HOSTNAME)"				| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_IP=$(KUBE_NODE_IP)"							| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_GATEWAY=$(KUBE_NODE_GATEWAY)"				| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_TIMEZONE=$(KUBE_NODE_TIMEZONE)"				| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_TYPE=$(KUBE_NODE_TYPE)"						| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_USER=$(KUBE_NODE_USER)"						| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_NODE_USER_HOME=$(KUBE_NODE_USER_HOME)"			| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "## Cluster wide"												| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_MASTER_VIP=$(KUBE_MASTER_VIP)"					| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_MASTER_IP_01=$(KUBE_MASTER_IP_01)"				| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_MASTER_IP_02=$(KUBE_MASTER_IP_02)"				| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
-	echo "export KUBE_MASTER_IP_03=$(KUBE_MASTER_IP_03)"				| sudo tee -a $(MNT_BOOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "#!/bin/bash"													| sudo tee $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "## Node specific"												| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_INTERFACE=$(KUBE_NODE_INTERFACE)"			| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_WIFI_SSID=$(KUBE_NODE_WIFI_SSID)"			| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_WIFI_PASSWORD=$(KUBE_NODE_WIFI_PASSWORD)"	| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_HOSTNAME=$(KUBE_NODE_HOSTNAME)"				| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_IP=$(KUBE_NODE_IP)"							| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_GATEWAY=$(KUBE_NODE_GATEWAY)"				| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_TIMEZONE=$(KUBE_NODE_TIMEZONE)"				| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_TYPE=$(KUBE_NODE_TYPE)"						| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_USER=$(KUBE_NODE_USER)"						| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_NODE_USER_HOME=$(KUBE_NODE_USER_HOME)"			| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "## Cluster wide"												| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_MASTER_VIP=$(KUBE_MASTER_VIP)"					| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_MASTER_IP_01=$(KUBE_MASTER_IP_01)"				| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_MASTER_IP_02=$(KUBE_MASTER_IP_02)"				| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
+	echo "export KUBE_MASTER_IP_03=$(KUBE_MASTER_IP_03)"				| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
 	## Add dhcp configuration to set a static IP and gateway
 	echo "interface $(KUBE_NODE_INTERFACE)" | sudo tee -a $(MNT_ROOT)/etc/dhcpcd.conf >/dev/null
 	echo "static ip_address=$(KUBE_NODE_IP)/24" | sudo tee -a $(MNT_ROOT)/etc/dhcpcd.conf >/dev/null
