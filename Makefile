@@ -52,8 +52,8 @@ endif
 
 .PHONY: prepare
 prepare: ## Create all necessary directories to be used in build
-	sudo mkdir -p $(MNT_BOOT)
-	sudo mkdir -p $(MNT_ROOT)
+	sudo mkdir -p $(MNT_BOOT)/boot
+	sudo mkdir -p $(MNT_ROOT)/root
 	mkdir -p ./$(OUTPUT_PATH)/ssh/
 
 .PHONY: format
@@ -73,8 +73,6 @@ bootstrap: $(OUTPUT_PATH)/ssh/id_ed25519 mount ## Install bootstrap scripts to m
 
 .PHONY: configure
 configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
-	## Add default start up script
-	sudo sed -i "/^exit 0$$/i /home/pi/bootstrap/bootstrap.sh 2>&1 | logger -t kubernetes-bootstrap &" $(MNT_ROOT)/etc/rc.local
 	## Disable SSH password based login
 	sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication no/g" $(MNT_ROOT)/etc/ssh/sshd_config
 	## Enable cgroups on boot
