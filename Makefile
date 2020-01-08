@@ -87,6 +87,7 @@ configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
 	## Enable cgroups on boot
 	sudo sed -i "s/^/cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory /" $(MNT_BOOT)/cmdline.txt
 	## Add node custom configuration file to be sourced on boot
+	mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap
 	echo "#!/bin/bash"													| sudo tee $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
 	echo "## Node specific"												| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
 	echo "export KUBE_NODE_INTERFACE=$(KUBE_NODE_INTERFACE)"			| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
@@ -110,20 +111,18 @@ configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
 	echo "static routers=$(KUBE_NODE_GATEWAY)" | sudo tee -a $(MNT_ROOT)/etc/dhcpcd.conf >/dev/null
 	echo "static domain_name_servers=$(KUBE_NODE_GATEWAY)" | sudo tee -a $(MNT_ROOT)/etc/dhcpcd.conf >/dev/null
 	## Ensure we are set to execute on reboot
-	cat << EOF >> $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
-	[Service]
-	Type=oneshot
-	RemainAfterExit=yes
-	ExecStart=/home/$KUBE_NODE_USER/bootstrap/bootstrap.sh
-	StandardOutput=syslog
-	StandardError=syslog
-	SyslogIdentifier=kubernetes-bootstrap
-	After=network-online.target
-	Wants=network-online.target
-
-	[Install]
-	WantedBy=multi-user.target
-	EOF
+	echo "[Service]" | sudo tee $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "Type=oneshot" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "RemainAfterExit=yes" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "ExecStart=/home/$KUBE_NODE_USER/bootstrap/bootstrap.sh" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "StandardOutput=syslog" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "StandardError=syslog" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "SyslogIdentifier=kubernetes-bootstrap" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "After=network-online.target" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "Wants=network-online.target" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "[Install]" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "WantedBy=multi-user.target" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 
 ## Helpers
 .PHONY: wlan0
