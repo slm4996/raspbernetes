@@ -31,7 +31,7 @@ RASPBIAN_IMAGE_VERSION = 2019-09-26-raspbian-buster-lite
 RASPBIAN_URL           = https://downloads.raspberrypi.org/raspbian_lite/images/$(RASPBIAN_VERSION)/$(RASPBIAN_IMAGE_VERSION).zip
 
 .PHONY: deploy
-build: prepare format install-bootstrap configure cleanup
+build: prepare format bootstrap configure unmount ## Generate and pre-configure bootable media for a node
 	echo "Image:"
 	echo "- Hostname:			$(RPI_HOSTNAME)"
 	echo "- Static IP:			$(RPI_IP)"
@@ -60,8 +60,8 @@ format: $(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img unmount ## Format the SD ca
 	echo "Formatting SD card with $(RASPBIAN_IMAGE_VERSION).img"
 	sudo dd bs=4M if=./$(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img of=$(MNT_DEVICE) status=progress conv=fsync
 
-.PHONY: install-bootstrap
-install-bootstrap: $(OUTPUT_PATH)/ssh/id_ed25519 mount
+.PHONY: bootstrap
+bootstrap: $(OUTPUT_PATH)/ssh/id_ed25519 mount ## Install bootstrap scripts to mounted media
 	sudo touch $(MNT_BOOT)/ssh
 	mkdir -p $(RPI_HOME)/bootstrap/
 	cp -r ./raspbernetes/* $(RPI_HOME)/bootstrap/
@@ -71,7 +71,7 @@ install-bootstrap: $(OUTPUT_PATH)/ssh/id_ed25519 mount
 	sudo rm -f $(MNT_ROOT)/etc/motd
 
 .PHONY: configure
-configure: $(RPI_NETWORK_TYPE)
+configure: $(RPI_NETWORK_TYPE) mount## Apply configuration to mounted media
 	## Add default start up script
 	sudo sed -i "/^exit 0$$/i /home/pi/bootstrap/bootstrap.sh 2>&1 | logger -t kubernetes-bootstrap &" $(MNT_ROOT)/etc/rc.local
 	## Disable SSH password based login
@@ -117,7 +117,7 @@ $(OUTPUT_PATH)/ssh/id_ed25519: ## Generate SSH keypair to use in cluster communi
 	ssh-keygen -t ed25519 -b 4096 -C "pi@raspberry" -f ./$(OUTPUT_PATH)/ssh/id_ed25519 -q -N ""
 
 .PHONY: mount
-mount: ## Mount the current SD device
+mount: ## Mount the specified media device
 ifeq (,$(findstring mmcblk,$(MNT_DEVICE)))
 	sudo mount $(MNT_DEVICE)1 $(MNT_BOOT)
 	sudo mount $(MNT_DEVICE)2 $(MNT_ROOT)
@@ -127,7 +127,7 @@ else
 endif
 
 .PHONY: unmount
-unmount: ## Unmount the current SD device
+unmount: ## Unmount the specified media device
 ifeq (,$(findstring mmcblk,$(MNT_DEVICE)))
 	sudo umount $(MNT_DEVICE)1 || true
 	sudo umount $(MNT_DEVICE)2 || true
@@ -135,9 +135,6 @@ else
 	sudo umount $(MNT_DEVICE)p1 || true
 	sudo umount $(MNT_DEVICE)p2 || true
 endif
-
-.PHONY: cleanup
-clean: unmount
 	sudo rm -rf $(MNT_BOOT)
 	sudo rm -rf $(MNT_ROOT)
 
