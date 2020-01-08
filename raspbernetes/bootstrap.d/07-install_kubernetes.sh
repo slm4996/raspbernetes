@@ -1,12 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-KUBE_USER_HOME="/home/pi"
-kube_finished="${KUBE_USER_HOME}/kube-finished-booting"
+KUBE_NODE_USER_HOME="/home/pi"
+kube_finished="${KUBE_NODE_USER_HOME}/kube-finished-booting"
 
 etcdctl_cmd() {
   remote_control_plane \
-    kubectl exec "etcd-\${HOSTNAME}" -n kube-system -- \
+    kubectl exec "etcd-\${KUBE_NODE_HOSTNAME}" -n kube-system -- \
       etcdctl \
         --endpoints https://localhost:2379 \
         --ca-file /etc/kubernetes/pki/etcd/ca.crt \
@@ -20,14 +20,14 @@ remote_control_plane() {
     -q \
     -o UserKnownHostsFile=/dev/null \
     -o StrictHostKeyChecking=no \
-    -i "${KUBE_USER_HOME}/.ssh/id_ed25519" \
+    -i "${KUBE_NODE_USER_HOME}/.ssh/id_ed25519" \
     "pi@${KUBE_MASTER_VIP}" "${@}"
 }
 
 clean_node() {
-  if remote_control_plane kubectl get nodes | grep "${HOSTNAME}" | grep "NotReady"; then
-    echo "Deleting ${HOSTNAME} node from kubernetes cluster"
-    remote_control_plane kubectl delete node "${HOSTNAME}"
+  if remote_control_plane kubectl get nodes | grep "${KUBE_NODE_HOSTNAME}" | grep "NotReady"; then
+    echo "Deleting ${KUBE_NODE_HOSTNAME} node from kubernetes cluster"
+    remote_control_plane kubectl delete node "${KUBE_NODE_HOSTNAME}"
 
     if [ "${KUBE_NODE_TYPE}" == "master" ]; then
       reset_master
@@ -53,14 +53,14 @@ cluster_up() {
 }
 
 reset_master() {
-  echo "Removing master ${HOSTNAME} from existing etcd cluster"
-  etcdctl_member=$(etcdctl_cmd member list | grep "${HOSTNAME}" | cut -d ':' -f1)
+  echo "Removing master ${KUBE_NODE_HOSTNAME} from existing etcd cluster"
+  etcdctl_member=$(etcdctl_cmd member list | grep "${KUBE_NODE_HOSTNAME}" | cut -d ':' -f1)
   etcdctl_cmd member remove "${etcdctl_member}"
 
   echo "Updating the existing kubeadm config to clear out stale host"
-  remote_control_plane "kubectl get configmaps kubeadm-config -n kube-system -o yaml > /tmp/kubeadm-${HOSTNAME}.yaml"
-  remote_control_plane "sed -i '/      ${HOSTNAME}/,+2 d' /tmp/kubeadm-${HOSTNAME}.yaml"
-  remote_control_plane "kubectl apply -f /tmp/kubeadm-${HOSTNAME}.yaml -n kube-system"
+  remote_control_plane "kubectl get configmaps kubeadm-config -n kube-system -o yaml > /tmp/kubeadm-${KUBE_NODE_HOSTNAME}.yaml"
+  remote_control_plane "sed -i '/      ${KUBE_NODE_HOSTNAME}/,+2 d' /tmp/kubeadm-${KUBE_NODE_HOSTNAME}.yaml"
+  remote_control_plane "kubectl apply -f /tmp/kubeadm-${KUBE_NODE_HOSTNAME}.yaml -n kube-system"
 }
 
 get_certs() {
@@ -85,13 +85,13 @@ get_certs() {
 
 get_config() {
   mkdir -p "/root/.kube"
-  mkdir -p "${KUBE_USER_HOME}/.kube"
+  mkdir -p "${KUBE_NODE_USER_HOME}/.kube"
   sed -i "s/6443/8443/" /etc/kubernetes/admin.conf
   cp -f /etc/kubernetes/admin.conf "/root/.kube/config"
-  cp -f /etc/kubernetes/admin.conf "${KUBE_USER_HOME}/.kube/config"
+  cp -f /etc/kubernetes/admin.conf "${KUBE_NODE_USER_HOME}/.kube/config"
   chown -R "$(id -u):$(id -g)" "/root/.kube"
-  chown -R "$(id -u pi):$(id -g pi)" "${KUBE_USER_HOME}/"
-  echo "source <(kubectl completion bash)" >> "${KUBE_USER_HOME}/.bashrc"
+  chown -R "$(id -u pi):$(id -g pi)" "${KUBE_NODE_USER_HOME}/"
+  echo "source <(kubectl completion bash)" >> "${KUBE_NODE_USER_HOME}/.bashrc"
 }
 
 join_master() {

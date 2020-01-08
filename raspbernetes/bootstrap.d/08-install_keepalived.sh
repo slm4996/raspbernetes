@@ -8,9 +8,9 @@ if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     apt-mark hold keepalived
 
     # figure out a priority level based on IP
-    if [[ "${RPI_IP}" == "${KUBE_MASTER_IP_01}" ]]; then
+    if [[ "${KUBE_NODE_IP}" == "${KUBE_MASTER_IP_01}" ]]; then
         priority=150
-        elif [[ "${RPI_IP}" == "${KUBE_MASTER_IP_02}" ]]; then
+        elif [[ "${KUBE_NODE_IP}" == "${KUBE_MASTER_IP_02}" ]]; then
         priority=100
     else
         priority=50
