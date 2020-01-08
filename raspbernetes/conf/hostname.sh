@@ -15,5 +15,7 @@ echo "Restarting cron and rsyslog for timezone settings to take affect"
 systemctl restart cron
 systemctl restart rsyslog
 
-echo "Restarting avahi-daemon (mDNS) daemon for new settings to take effect"
-systemctl restart avahi-daemon
+if systemctl list-units --type service | grep -Fq 'avahi'; then
+    echo "Restarting avahi-daemon (mDNS) daemon for new settings to take effect"
+    systemctl restart avahi-daemon
+fi
