@@ -32,7 +32,7 @@ RASPBIAN_IMAGE_VERSION	= 2019-09-26-raspbian-buster-lite
 RASPBIAN_URL			= https://downloads.raspberrypi.org/raspbian_lite/images/$(RASPBIAN_VERSION)/$(RASPBIAN_IMAGE_VERSION).zip
 
 .PHONY: build
-build: prepare format bootstrap configure unmount clean ## Generate and pre-configure bootable media for a node
+build: format bootstrap configure clean ## Generate and pre-configure bootable media for a node
 	echo "Image:"
 	echo "- Hostname:			$(KUBE_NODE_HOSTNAME)"
 	echo "- Static IP:			$(KUBE_NODE_IP)"
@@ -63,31 +63,31 @@ prepare: ## Create all necessary directories to be used in build
 	mkdir -p ./$(OUTPUT_PATH)/ssh/
 
 .PHONY: format
-format: $(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img unmount ## Format the SD card with Raspbian
+format: $(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img ## Format the SD card with Raspbian
 	echo "Step - format"
 	echo "Formatting $(MNT_DEVICE) with $(RASPBIAN_IMAGE_VERSION).img"
 	sudo dd bs=4M if=./$(OUTPUT_PATH)/$(RASPBIAN_IMAGE_VERSION).img of=$(MNT_DEVICE) status=progress conv=fsync
 
 .PHONY: bootstrap
-bootstrap: $(OUTPUT_PATH)/ssh/id_ed25519 mount ## Install bootstrap scripts to mounted media
+bootstrap: prepare mount $(OUTPUT_PATH)/ssh/id_ed25519 ## Install bootstrap scripts to mounted media
 	echo "Step - bootstrap"
 	sudo touch $(MNT_BOOT)/ssh
-	mkdir -p $(KUBE_NODE_USER_HOME)/bootstrap/
+	mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/
 	cp -r ./raspbernetes/* $(KUBE_NODE_USER_HOME)/bootstrap/
-	mkdir -p $(KUBE_NODE_USER_HOME)/.ssh
-	cp ./$(OUTPUT_PATH)/ssh/id_ed25519 $(KUBE_NODE_USER_HOME)/.ssh/
-	cp ./$(OUTPUT_PATH)/ssh/id_ed25519.pub $(KUBE_NODE_USER_HOME)/.ssh/authorized_keys
+	mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh
+	cp ./$(OUTPUT_PATH)/ssh/id_ed25519 $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/
+	cp ./$(OUTPUT_PATH)/ssh/id_ed25519.pub $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/authorized_keys
 	sudo rm -f $(MNT_ROOT)/etc/motd
+	unmount
 
 .PHONY: configure
-configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
+configure: prepare mount $(KUBE_NODE_INTERFACE)## Apply configuration to mounted media
 	echo "Step - configure"
 	## Disable SSH password based login
 	sudo sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication no/g" $(MNT_ROOT)/etc/ssh/sshd_config
 	## Enable cgroups on boot
 	sudo sed -i "s/^/cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory /" $(MNT_BOOT)/cmdline.txt
 	## Add node custom configuration file to be sourced on boot
-	mkdir -p $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap
 	echo "#!/bin/bash"													| sudo tee $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
 	echo "## Node specific"												| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
 	echo "export KUBE_NODE_INTERFACE=$(KUBE_NODE_INTERFACE)"			| sudo tee -a $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/bootstrap/env
@@ -123,16 +123,18 @@ configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
 	echo "" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "[Install]" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "WantedBy=multi-user.target" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	unmount
 
 ## Helpers
 .PHONY: wlan0
-wlan0: ## Install wpa_supplicant for auto network join
+wlan0: prepare mount ## Install wpa_supplicant for auto network join
 	echo "Step - wlan0"
 	test -n "$(KUBE_NODE_WIFI_SSID)"
 	test -n "$(KUBE_NODE_WIFI_PASSWORD)"
 	sudo cp ./raspbernetes/template/wpa_supplicant.conf $(MNT_BOOT)/wpa_supplicant.conf
 	sudo sed -i "s/<WIFI_SSID>/$(KUBE_NODE_WIFI_SSID)/" $(MNT_BOOT)/wpa_supplicant.conf
 	sudo sed -i "s/<WIFI_PASSWORD>/$(KUBE_NODE_WIFI_PASSWORD)/" $(MNT_BOOT)/wpa_supplicant.conf
+	unmount
 
 .PHONY: eth0
 eth0: ## Nothing to do for eth0
