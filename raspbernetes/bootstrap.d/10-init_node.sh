@@ -17,4 +17,5 @@ if [ "${KUBE_NODE_TYPE}" == "master" ]; then
 fi
 
 # ensure bootstrap scripts don't run again on boot
-sed -i "/bootstrap.sh/d" /etc/rc.local
+systemctl disable kubernetes-bootstrap
+systemctl daemon-reload

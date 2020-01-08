@@ -102,6 +102,19 @@ configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
 	echo "static ip_address=$(KUBE_NODE_IP)/24" | sudo tee -a $(MNT_ROOT)/etc/dhcpcd.conf >/dev/null
 	echo "static routers=$(KUBE_NODE_GATEWAY)" | sudo tee -a $(MNT_ROOT)/etc/dhcpcd.conf >/dev/null
 	echo "static domain_name_servers=$(KUBE_NODE_GATEWAY)" | sudo tee -a $(MNT_ROOT)/etc/dhcpcd.conf >/dev/null
+	## Ensure we are set to execute on reboot
+	cat << EOF >> $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/$KUBE_NODE_USER/bootstrap.sh
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=kubernetes-bootstrap
+
+[Install]
+WantedBy=multi-user.target
+EOF
 
 ## Helpers
 .PHONY: wlan0
