@@ -78,7 +78,14 @@ bootstrap: prepare mount $(OUTPUT_PATH)/ssh/id_ed25519 ## Install bootstrap scri
 	sudo cp ./$(OUTPUT_PATH)/ssh/id_ed25519 $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/
 	sudo cp ./$(OUTPUT_PATH)/ssh/id_ed25519.pub $(MNT_ROOT)$(KUBE_NODE_USER_HOME)/.ssh/authorized_keys
 	sudo rm -f $(MNT_ROOT)/etc/motd
-	unmount
+	echo "Step - unmount"
+ifeq (,$(findstring mmcblk,$(MNT_DEVICE)))
+	sudo umount $(MNT_DEVICE)1 || true
+	sudo umount $(MNT_DEVICE)2 || true
+else
+	sudo umount $(MNT_DEVICE)p1 || true
+	sudo umount $(MNT_DEVICE)p2 || true
+endif
 
 .PHONY: configure
 configure: prepare mount $(KUBE_NODE_INTERFACE)## Apply configuration to mounted media
@@ -123,7 +130,14 @@ configure: prepare mount $(KUBE_NODE_INTERFACE)## Apply configuration to mounted
 	echo "" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "[Install]" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "WantedBy=multi-user.target" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
-	unmount
+	echo "Step - unmount"
+ifeq (,$(findstring mmcblk,$(MNT_DEVICE)))
+	sudo umount $(MNT_DEVICE)1 || true
+	sudo umount $(MNT_DEVICE)2 || true
+else
+	sudo umount $(MNT_DEVICE)p1 || true
+	sudo umount $(MNT_DEVICE)p2 || true
+endif
 
 ## Helpers
 .PHONY: wlan0
@@ -134,7 +148,14 @@ wlan0: prepare mount ## Install wpa_supplicant for auto network join
 	sudo cp ./raspbernetes/template/wpa_supplicant.conf $(MNT_BOOT)/wpa_supplicant.conf
 	sudo sed -i "s/<WIFI_SSID>/$(KUBE_NODE_WIFI_SSID)/" $(MNT_BOOT)/wpa_supplicant.conf
 	sudo sed -i "s/<WIFI_PASSWORD>/$(KUBE_NODE_WIFI_PASSWORD)/" $(MNT_BOOT)/wpa_supplicant.conf
-	unmount
+	echo "Step - unmount"
+ifeq (,$(findstring mmcblk,$(MNT_DEVICE)))
+	sudo umount $(MNT_DEVICE)1 || true
+	sudo umount $(MNT_DEVICE)2 || true
+else
+	sudo umount $(MNT_DEVICE)p1 || true
+	sudo umount $(MNT_DEVICE)p2 || true
+endif
 
 .PHONY: eth0
 eth0: ## Nothing to do for eth0
