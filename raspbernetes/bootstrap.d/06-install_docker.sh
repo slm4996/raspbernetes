@@ -11,7 +11,7 @@ else
     usermod pi -aG docker
 fi
 
-lsb_dist=$(get_release)
+lsb_dist=$(get_distribution)
 if "$lsb_dist" -eq 'raspbian'; then
     ## Only if running on a Pi
     echo "Disabling swap"
