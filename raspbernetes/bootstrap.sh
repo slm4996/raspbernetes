@@ -15,6 +15,7 @@ echo "Waiting for system to boot before attempting to install packages..."
 sleep 30
 
 # install system dependencies in order
+./conf/firmware.sh
 ./install/utils.sh
 ./install/iptables.sh
 ./install/docker.sh

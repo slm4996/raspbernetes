@@ -1,10 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-haproxy_version="1.8.19-1+rpi1"
-
-echo "Installing haproxy ${haproxy_version}..."
-apt-get install -y --no-install-recommends "haproxy=${haproxy_version}"
+echo "Installing haproxy..."
+apt-get install -y --no-install-recommends haproxy
 apt-mark hold haproxy
 
 # create a configuration file for all other master hosts
@@ -29,5 +27,5 @@ backend kube-api
   server kube-master-03 ${KUBE_MASTER_IP_03}:6443 check
 EOF
 
-# reload after new configuration file has been updated
+echo "Reload haproxy after new configuration"
 systemctl reload haproxy

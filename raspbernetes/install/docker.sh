@@ -1,21 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-docker_version="5:18.09.0~3-0~raspbian-stretch"
+echo "Installing docker"
+curl -sSL get.docker.com | sh && \
+    usermod pi -aG docker
 
-# add repo list
-curl -fsSL https://download.docker.com/linux/raspbian/gpg | apt-key add -
-cat << EOF >> /etc/apt/sources.list.d/docker.list
-deb [arch=armhf] https://download.docker.com/linux/raspbian stretch stable
-EOF
+echo "Disabling swap"
+dphys-swapfile swapoff && \
+    dphys-swapfile uninstall && \
+    update-rc.d dphys-swapfile remove && \
+    systemctl disable dphys-swapfile.service
 
-# update mirrors and install docker
-echo "Installing docker ${docker_version}..."
-apt-get update
-apt-get install -y --no-install-recommends "docker-ce=${docker_version}"
-apt-mark hold docker-ce
-
-# setup daemon to user systemd as per kubernetes best practices
+echo "Setup docker daemon to user systemd as per kubernetes best practices"
 cat << EOF >> /etc/docker/daemon.json
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
@@ -27,8 +23,6 @@ cat << EOF >> /etc/docker/daemon.json
 }
 EOF
 
-mkdir -p /etc/systemd/system/docker.service.d
-
-# restart docker
+echo "Restarting docker"
 systemctl daemon-reload
 systemctl restart docker

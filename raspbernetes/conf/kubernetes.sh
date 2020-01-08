@@ -1,8 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-flannel_version="2140ac876ef134e0ed5af15c65e414cf26827915"
-flannel_url="https://raw.githubusercontent.com/coreos/flannel/${flannel_version}/Documentation/kube-flannel.yml"
 pi_home="/home/pi"
 kube_finished="${pi_home}/kube-finished-booting"
 
@@ -120,8 +118,7 @@ init_master() {
     --skip-token-print \
     --skip-certificate-key-print
 
-  # setup flannel
-  kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f "${flannel_url}"
+  init_cni
 }
 
 existing_master() {
@@ -143,6 +140,11 @@ join_worker() {
   # get kubeadm join command from master
   join_command=$(remote_control_plane kubeadm token create --print-join-command)
   ${join_command}
+}
+
+init_cni() {
+    echo "Initializing CNI: Weave"
+    kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 }
 
 # determine the node type and run specific function

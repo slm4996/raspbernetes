@@ -11,4 +11,5 @@ apt-get install -y --no-install-recommends \
   zip \
   jq \
   git \
-  vim
+  vim \
+  curl

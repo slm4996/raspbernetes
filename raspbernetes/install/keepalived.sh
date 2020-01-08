@@ -1,10 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-keepalived_version="1:2.0.10-1"
-
-echo "Installing keepalived ${keepalived_version}..."
-apt-get install -y --no-install-recommends "keepalived=${keepalived_version}"
+echo "Installing keepalived..."
+apt-get install -y --no-install-recommends keepalived
 apt-mark hold keepalived
 
 # figure out a priority level based on IP
@@ -34,5 +32,5 @@ vrrp_instance VI_1 {
 }
 EOF
 
-# enable and start keepalived
+echo "Enable and start keepalived"
 systemctl enable --now keepalived
