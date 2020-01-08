@@ -121,7 +121,7 @@ configure: prepare mount $(KUBE_NODE_INTERFACE)## Apply configuration to mounted
 	echo "[Service]" | sudo tee $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "Type=oneshot" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "RemainAfterExit=yes" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
-	echo "ExecStart=/home/$KUBE_NODE_USER/bootstrap/bootstrap.sh" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
+	echo "ExecStart=/home/$(KUBE_NODE_USER)/bootstrap/bootstrap.sh" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "StandardOutput=syslog" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "StandardError=syslog" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
 	echo "SyslogIdentifier=kubernetes-bootstrap" | sudo tee -a $(MNT_ROOT)/etc/systemd/system/kubernetes-bootstrap.service
