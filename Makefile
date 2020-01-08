@@ -107,7 +107,7 @@ configure: $(KUBE_NODE_INTERFACE) mount## Apply configuration to mounted media
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/home/$KUBE_NODE_USER/bootstrap.sh
+ExecStart=/home/$KUBE_NODE_USER/bootstrap/bootstrap.sh
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=kubernetes-bootstrap

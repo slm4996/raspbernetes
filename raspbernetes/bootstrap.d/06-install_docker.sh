@@ -1,9 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Installing docker"
-curl -sSL get.docker.com | sh
-usermod pi -aG docker
+if command_exists docker; then
+    apt update
+    apt upgrade docker-ce-cli
+    apt upgrade docker-ce
+else
+    echo "Installing docker"
+    curl -sSL get.docker.com | sh
+    usermod pi -aG docker
+fi
 
 if lsb_dist -eq 'raspbian'; then
     ## Only if running on a Pi
