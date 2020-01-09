@@ -143,16 +143,16 @@ EOF
     ## Ensure we are set to execute on reboot
     cat << EOF > "${MNT_ROOT}/etc/systemd/system/kubernetes-bootstrap.service"
 [Unit]
-After=network-online.target
-Wants=network-online.target
+Description=Kubernetes Cluster Bootstrap
+After=network.target
 
 [Service]
-Type=oneshot
-RemainAfterExit=yes
 ExecStart=/home/${KUBE_NODE_USER}/bootstrap/bootstrap.sh
+WorkingDirectory=/home/${KUBE_NODE_USER}/bootstrap
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=kubernetes-bootstrap
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
