@@ -150,10 +150,9 @@ After=network.target
 [Service]
 ExecStart=/home/${KUBE_NODE_USER}/bootstrap/bootstrap.sh
 WorkingDirectory=/home/${KUBE_NODE_USER}/bootstrap
-StandardOutput=syslog+tty
-StandardError=syslog+tty
+StandardOutput=syslog+console
+StandardError=syslog+console
 SyslogIdentifier=kubernetes-bootstrap
-TTYPath=/dev/tty1
 Restart=always
 
 [Install]

@@ -35,6 +35,8 @@ if grep -Fq 'raspbian' /etc/os-release; then
         dphys-swapfile uninstall
         update-rc.d dphys-swapfile remove
         systemctl disable dphys-swapfile.service
+        swapoff -a
+        sudo sed -i '/ swap / s/^/#/' /etc/fstab
     fi
 else
     ## Other systems
