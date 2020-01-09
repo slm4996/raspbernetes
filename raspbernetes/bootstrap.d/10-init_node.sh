@@ -91,7 +91,7 @@ get_config() {
   cp -f /etc/kubernetes/admin.conf "/root/.kube/config"
   cp -f /etc/kubernetes/admin.conf "${KUBE_NODE_USER_HOME}/.kube/config"
   chown -R "$(id -u):$(id -g)" "/root/.kube"
-  chown -R "$(id -u pi):$(id -g pi)" "${KUBE_NODE_USER_HOME}/"
+  chown -R "$(id -u ${KUBE_NODE_USER}):$(id -g ${KUBE_NODE_USER})" "${KUBE_NODE_USER_HOME}/"
   echo "source <(kubectl completion bash)" >> "${KUBE_NODE_USER_HOME}/.bashrc"
 }
 
