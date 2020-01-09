@@ -118,6 +118,8 @@ init_master() {
     --skip-token-print \
     --skip-certificate-key-print
 
+  get_config
+
   init_cni
 }
 

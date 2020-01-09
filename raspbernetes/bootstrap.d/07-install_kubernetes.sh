@@ -8,8 +8,8 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 
 until apt-get update; do echo "Retrying due to unstable mirror"; done
-apt-get install -y kubelet kubeadm kubectl kubectx
-apt-mark hold kubelet kubeadm kubectl
+DEBIAN_FRONTEND=noninteractive apt-get install -y kubelet kubeadm kubectl kubectx
+DEBIAN_FRONTEND=noninteractive apt-mark hold kubelet kubeadm kubectl
 
 if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     echo "Pulling down all kubeadm images..."

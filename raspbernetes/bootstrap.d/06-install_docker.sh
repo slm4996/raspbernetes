@@ -2,9 +2,9 @@
 set -euo pipefail
 
 if command_exists docker; then
-    apt update
-    apt install --only-upgrade docker-ce-cli
-    apt install --only-upgrade docker-ce
+    DEBIAN_FRONTEND=noninteractive apt update -y
+    DEBIAN_FRONTEND=noninteractive apt install --only-upgrade docker-ce-cli -y
+    DEBIAN_FRONTEND=noninteractive apt install --only-upgrade docker-ce -y
 else
     echo "Installing docker"
     curl -sSL get.docker.com | sh

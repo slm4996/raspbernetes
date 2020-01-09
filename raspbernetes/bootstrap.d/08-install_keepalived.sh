@@ -4,7 +4,7 @@ set -euo pipefail
 # only install some components on master nodes
 if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     echo "Installing keepalived..."
-    apt-get install -y --no-install-recommends keepalived
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends keepalived
     apt-mark hold keepalived
 
     # figure out a priority level based on IP

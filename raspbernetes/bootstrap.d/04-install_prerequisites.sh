@@ -3,10 +3,10 @@ set -euo pipefail
 
 function install_prerequisites() {
     echo "Updating core packages..."
-    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get update
 
     echo "Installing base packages..."
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     apt-transport-https \
     software-properties-common \
     zip \
@@ -14,4 +14,6 @@ function install_prerequisites() {
     git \
     vim \
     curl
+
+    DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 }

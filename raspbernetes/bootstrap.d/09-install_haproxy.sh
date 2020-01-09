@@ -3,7 +3,7 @@ set -euo pipefail
 
 if [ "${KUBE_NODE_TYPE}" == "master" ]; then
     echo "Installing haproxy..."
-    apt-get install -y --no-install-recommends haproxy
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends haproxy
     apt-mark hold haproxy
 
     #create a configuration file for all other master hosts

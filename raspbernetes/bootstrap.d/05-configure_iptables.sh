@@ -3,7 +3,7 @@ set -euo pipefail
 
 function configure_iptables() {
     echo "Installing ebtables and arptables..."
-    apt-get install -y ebtables arptables
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ebtables arptables
 
     echo "Setting to use legacy tables for compatibility issues"
     update-alternatives --set iptables /usr/sbin/iptables-legacy
