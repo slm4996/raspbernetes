@@ -15,6 +15,11 @@ fi
 ## Change to script directory
 cd "${0%/*}"
 
+if [ ! -f "./config" ]; then
+    echo "Copy config.example to config and update values before running!"
+    exit 1
+fi
+
 ## source the configuration variables
 # shellcheck source=/dev/null
 source ./config
