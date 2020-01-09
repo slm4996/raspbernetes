@@ -65,7 +65,7 @@ then
     echo "- Disable SSH password based login"
     sed -i "s/.*PasswordAuthentication.*/PasswordAuthentication no/g" "/etc/ssh/sshd_config"
     echo "- Enable cgroups on boot"
-    sed -i '/GRUB_CMDLINE_LINUX_DEFAULT/c\GRUB_CMDLINE_LINUX_DEFAULT="cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory quiet"'
+    sed -i '/GRUB_CMDLINE_LINUX_DEFAULT/c\GRUB_CMDLINE_LINUX_DEFAULT="cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory quiet"' /etc/default/grub
     echo "- Add node custom configuration file to be sourced on boot"
     cat << EOF > "${KUBE_NODE_USER_HOME}/bootstrap/config"
 #!/bin/bash
