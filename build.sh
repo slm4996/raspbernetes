@@ -112,7 +112,7 @@ then
     echo "- Enable cgroups on boot"
     sed -i "s/^/cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory /" "${MNT_BOOT}/cmdline.txt"
     echo "- Add node custom configuration file to be sourced on boot"
-    cat << EOF > "${MNT_ROOT}${KUBE_NODE_USER_HOME}/bootstrap/env"
+    cat << EOF > "${MNT_ROOT}${KUBE_NODE_USER_HOME}/bootstrap/config"
 #!/bin/bash
 
 ## Node specific

@@ -17,7 +17,7 @@ cd "${0%/*}"
 
 ## source the environment variables for hostname, IP addresses and node type
 # shellcheck source=/dev/null
-source ./env
+source ./config
 
 #### Sub-Modules
 ## Load sub-modules from bootstrap.d directory
