@@ -2,6 +2,7 @@
 
 #=Default=variables
 MNT_DEVICE=/dev/mmcblk0
+MNT_DEVICE_FORMAT=no
 MNT_ROOT=/mnt/raspbernetes/root
 MNT_BOOT=/mnt/raspbernetes/boot
 OUTPUT_PATH=output
