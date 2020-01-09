@@ -20,6 +20,25 @@ if [ ! -f "./config" ]; then
     exit 1
 fi
 
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+
+    case $key in
+        -n|--noformat)
+            NO_FORMAT=true
+            shift # past argument
+            shift # past value
+        ;;
+        *)    # unknown option
+            POSITIONAL+=("$1") # save it in an array for later
+            shift # past argument
+        ;;
+    esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
 ## source the configuration variables
 # shellcheck source=/dev/null
 source ./config
@@ -71,8 +90,12 @@ then
 
     ## Format media
     echo "Step - format"
-    echo "-- formatting ${MNT_DEVICE} with ${RASPBIAN_IMAGE_VERSION}.img"
-    dd bs=4M if="./${OUTPUT_PATH}/${RASPBIAN_IMAGE_VERSION}.img" of="${MNT_DEVICE}" status=progress conv=fsync
+    if [ $NO_FORMAT ]; then
+        echo "-- formatting ${MNT_DEVICE} with ${RASPBIAN_IMAGE_VERSION}.img"
+        dd bs=4M if="./${OUTPUT_PATH}/${RASPBIAN_IMAGE_VERSION}.img" of="${MNT_DEVICE}" status=progress conv=fsync
+    else
+        echo "-n or --noformat specifed, skipping formatting of media"
+    fi
 
     echo "Step - mount"
     if [[ $MNT_DEVICE == *"mmcblk"* ]]; then
