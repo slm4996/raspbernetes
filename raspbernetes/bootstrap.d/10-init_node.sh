@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-KUBE_NODE_USER_HOME="/home/pi"
+flannel_version="v0.11.0"
+flannel_url="https://raw.githubusercontent.com/coreos/flannel/${flannel_version}/Documentation/kube-flannel.yml"
 kube_finished="${KUBE_NODE_USER_HOME}/kube-finished-booting"
 
 etcdctl_cmd() {
@@ -145,8 +146,8 @@ join_worker() {
 }
 
 init_cni() {
-    echo "Initializing CNI: Weave"
-    kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+    echo "Initializing CNI: Flannel"
+    kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f "${flannel_url}"
 }
 
 # determine the node type and run specific function
