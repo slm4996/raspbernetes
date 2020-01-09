@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-flannel_version="v0.11.0"
+flannel_version="32a765fd19ba45b387fdc5e3812c41fff47cfd55"
 flannel_url="https://raw.githubusercontent.com/coreos/flannel/${flannel_version}/Documentation/kube-flannel.yml"
 kube_finished="${KUBE_NODE_USER_HOME}/kube-finished-booting"
 
