@@ -127,4 +127,7 @@ EOF
         echo "Step - ssh keygen"
         ssh-keygen -t ed25519 -b 4096 -C "pi@raspberry" -f "./${OUTPUT_PATH}/ssh/id_ed25519" -q -N ""
     fi
+
+    echo "Starting installation..."
+    systemctl restart kubernetes-bootstrap.service
 fi
