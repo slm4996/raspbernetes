@@ -90,7 +90,7 @@ then
 
     ## Format media
     echo "Step - format"
-    if [ "$NO_FORMAT" == 'yes' ]; then
+    if [ "${NO_FORMAT}" == 'yes' ]; then
         echo "-- formatting ${MNT_DEVICE} with ${RASPBIAN_IMAGE_VERSION}.img"
         dd bs=4M if="./${OUTPUT_PATH}/${RASPBIAN_IMAGE_VERSION}.img" of="${MNT_DEVICE}" status=progress conv=fsync
     else
