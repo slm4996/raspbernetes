@@ -16,7 +16,7 @@ KUBE_NODE_GATEWAY=
 KUBE_NODE_TIMEZONE=America/Indiana/Indianapolis
 KUBE_NODE_TYPE=master
 KUBE_NODE_USER=pi
-KUBE_NODE_USER_HOME="/home/$(KUBE_NODE_USER)"
+KUBE_NODE_USER_HOME="/home/${KUBE_NODE_USER}"
 
 #=Cluster=wide=configuration
 KUBE_MASTER_VIP=192.168.2.10
@@ -27,4 +27,4 @@ KUBE_MASTER_IP_03=192.168.2.13
 #=Raspbian=image=configuration
 RASPBIAN_VERSION=raspbian_lite-2019-09-30
 RASPBIAN_IMAGE_VERSION=2019-09-26-raspbian-buster-lite
-RASPBIAN_URL="https://downloads.raspberrypi.org/raspbian_lite/images/$(RASPBIAN_VERSION)/$(RASPBIAN_IMAGE_VERSION).zip"
+RASPBIAN_URL="https://downloads.raspberrypi.org/raspbian_lite/images/${RASPBIAN_VERSION}/${RASPBIAN_IMAGE_VERSION}.zip"
