@@ -121,7 +121,7 @@ export KUBE_MASTER_IP_02=${KUBE_MASTER_IP_02}
 export KUBE_MASTER_IP_03=${KUBE_MASTER_IP_03}
 EOF
     echo "- Add dhcp configuration to set a static IP and gateway"
-    cat << EOF >> "${MNT_ROOT}/etc/dhcpcd.conf >/dev/null"
+    cat << EOF >> "${MNT_ROOT}/etc/dhcpcd.conf"
 interface ${KUBE_NODE_INTERFACE}
 static ip_address=${KUBE_NODE_IP}/24
 static routers=${KUBE_NODE_GATEWAY}
