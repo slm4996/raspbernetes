@@ -19,3 +19,4 @@ sysctl net.bridge.bridge-nf-call-arptables=1
 echo "Reloading sysctl"
 modprobe br_netfilter
 sysctl -p /etc/sysctl.conf
+grep -qxF 'br_netfilter' /etc/modules || echo "br_netfilter" >> /etc/modules
