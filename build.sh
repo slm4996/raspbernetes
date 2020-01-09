@@ -84,7 +84,7 @@ then
         echo "-- formatting ${MNT_DEVICE} with ${RASPBIAN_IMAGE_VERSION}.img"
         dd bs=4M if="./${OUTPUT_PATH}/${RASPBIAN_IMAGE_VERSION}.img" of="${MNT_DEVICE}" status=progress conv=fsync
     else
-        echo "-n or --noformat specifed, skipping formatting of media"
+        echo "skipping formatting of media"
     fi
 
     echo "Step - mount"
