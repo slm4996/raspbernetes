@@ -25,17 +25,18 @@ fi
 source ./config
 
 ## Confirmation of settings
+echo "Device to be imaged:	${MNT_DEVICE}"
 echo "Image:"
-echo "- Hostname:			${KUBE_NODE_HOSTNAME}"
-echo "- Static IP:			${KUBE_NODE_IP}"
+echo "- Hostname:	${KUBE_NODE_HOSTNAME}"
+echo "- Static IP:	${KUBE_NODE_IP}"
 echo "- Gateway address:	${KUBE_NODE_GATEWAY}"
 echo "- Network adapter:	${KUBE_NODE_INTERFACE}"
 if [[ $KUBE_NODE_INTERFACE == *"wl"* ]]; then
-    echo "- WiFi SSID:			${KUBE_NODE_WIFI_SSID}"
-    echo "- WiFi Password:		${KUBE_NODE_WIFI_PASSWORD}"
+    echo "- WiFi SSID:	${KUBE_NODE_WIFI_SSID}"
+    echo "- WiFi Password:	${KUBE_NODE_WIFI_PASSWORD}"
 fi
-echo "- Node Type:			${KUBE_NODE_TYPE}"
-echo "- Timezone:			${KUBE_NODE_TIMEZONE}"
+echo "- Node Type:	${KUBE_NODE_TYPE}"
+echo "- Timezone:	${KUBE_NODE_TIMEZONE}"
 echo "Kubernetes:"
 echo "- Control Plane IP:	${KUBE_MASTER_VIP}"
 echo "- Master IP 01:		${KUBE_MASTER_IP_01}"
