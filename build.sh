@@ -60,7 +60,7 @@ then
 
     ## Download raspbian lite image
     echo "Step - download"
-    if [ -f "./${OUTPUT_PATH}/${RASPBIAN_IMAGE_VERSION}" ]; then
+    if [ -f "./${OUTPUT_PATH}/${RASPBIAN_IMAGE_VERSION}.img" ]; then
         echo "-- raspbian already downloaded"
     else
         echo "-- downloading ${RASPBIAN_IMAGE_VERSION}.img..."
