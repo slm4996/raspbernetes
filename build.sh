@@ -184,8 +184,10 @@ EOF
         sed -i "s/<WIFI_PASSWORD>/${KUBE_NODE_WIFI_PASSWORD}/" "${MNT_BOOT}/wpa_supplicant.conf"
     fi
 
-    echo "Step - ssh keygen"
-    ssh-keygen -t ed25519 -b 4096 -C "pi@raspberry" -f "./${OUTPUT_PATH}/ssh/id_ed25519" -q -N ""
+    if [ ! -f "./${OUTPUT_PATH}/ssh/id_ed25519" ]; then
+        echo "Step - ssh keygen"
+        ssh-keygen -t ed25519 -b 4096 -C "pi@raspberry" -f "./${OUTPUT_PATH}/ssh/id_ed25519" -q -N ""
+    fi
 
     echo "Step - unmount"
     if [[ $MNT_DEVICE == *"mmcblk"* ]]; then
