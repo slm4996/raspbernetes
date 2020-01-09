@@ -88,6 +88,15 @@ then
         rm -f "./${OUTPUT_PATH}/${RASPBIAN_IMAGE_VERSION}.zip"
     fi
 
+    echo "Step - ensure device media mounted"
+    if [[ $MNT_DEVICE == *"mmcblk"* ]]; then
+        sudo umount "${MNT_DEVICE}p1" || true
+        sudo umount "${MNT_DEVICE}p2" || true
+    else
+        sudo umount "${MNT_DEVICE}1" || true
+        sudo umount "${MNT_DEVICE}2" || true
+    fi
+
     ## Format media
     echo "Step - format"
     if [ ! "${NO_FORMAT}" == 'no' ]; then
