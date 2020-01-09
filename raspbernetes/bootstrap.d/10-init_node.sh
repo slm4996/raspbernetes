@@ -161,3 +161,7 @@ fi
 
 # indicate finished booting
 touch "${kube_finished}"
+
+systemctl stop kubernetes-bootstrap.service
+systemctl disable kubernetes-bootstrap.service
+systemctl daemon-reload
