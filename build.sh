@@ -161,6 +161,7 @@ EOF
     echo "Step - wlan0"
     if test -n "${KUBE_NODE_WIFI_SSID}"; then
         cp ./raspbernetes/template/wpa_supplicant.conf "${MNT_BOOT}/wpa_supplicant.conf"
+        sed -i "s/<WIFI_COUNTRY>/${KUBE_NODE_WIFI_COUNTRY}/" "${MNT_BOOT}/wpa_supplicant.conf"
         sed -i "s/<WIFI_SSID>/${KUBE_NODE_WIFI_SSID}/" "${MNT_BOOT}/wpa_supplicant.conf"
         sed -i "s/<WIFI_PASSWORD>/${KUBE_NODE_WIFI_PASSWORD}/" "${MNT_BOOT}/wpa_supplicant.conf"
     fi
