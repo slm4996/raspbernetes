@@ -113,6 +113,7 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 EOF
+    systemctl enable kubernetes-bootstrap.service
 
     echo "Step - wlan0"
     if test -n "${KUBE_NODE_WIFI_SSID}"; then
